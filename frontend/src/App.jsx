@@ -2,7 +2,12 @@ import { useEffect, useRef, useState } from "react";
 import AgentStream from "./components/AgentStream";
 import LeadCard from "./components/LeadCard";
 
-const API = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
+const FALLBACK_API =
+  typeof window !== "undefined" && window.location.hostname !== "localhost"
+    ? "https://prospector-7oj3.onrender.com"
+    : "http://localhost:8000";
+
+const API = import.meta.env.VITE_API_BASE_URL || FALLBACK_API;
 
 function ProspectorLogo() {
   return (

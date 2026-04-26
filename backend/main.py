@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import os
 from pathlib import Path
 from typing import AsyncGenerator
 
@@ -22,10 +23,21 @@ init_db()
 
 app = FastAPI(title="Prospector API", version="1.0.0")
 
-# Mirrors the permissive CORS posture used by PitchFlows runtime configuration.
+default_origins = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "https://prospector-six.vercel.app",
+]
+env_origins = [
+    origin.strip()
+    for origin in os.getenv("PROSPECTOR_CORS_ORIGINS", "").split(",")
+    if origin.strip()
+]
+allowed_origins = list(dict.fromkeys(default_origins + env_origins))
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
